@@ -30,11 +30,10 @@
                               (p "tags" (input ([type "text"])))
                               (p (input ([type "submit"] [value "add fact"])))))))))])
     (begin
-      ; add fact
-      (match (redirect/get)
-        [(request _ ...)
-         (print 'a)])
-      (page/add-facts (redirect/get)))))
+      (request-bindings request2)
+      
+      (redirect-to "/servlets/standalone.rkt"))))
 
 (serve/servlet start
-               #:servlet-regexp #rx"\\/")
+               #:servlet-regexp #rx"\\/"
+               #:command-line? #t)

@@ -1,11 +1,12 @@
 #lang racket/base
 (require racket/contract)
 
-(provide (contract-out
-          [struct memory-trace ((strands (listof strand?)))]
-          [struct strand ((first-assimilation assimilation?) (repetitions (listof repetition?)))]
-          [struct assimilation ((scores (listof (integer-in 0 5))))]
-          [struct repetition ((delay exact-positive-integer?) (score (integer-in 0 5)))]))
+(provide
+ (contract-out
+  [struct memory-trace ((strands (listof strand?)))]
+  [struct strand ((first-assimilation assimilation?) (repetitions (listof repetition?)))]
+  [struct assimilation ((scores (listof (integer-in 0 5))))]
+  [struct repetition ((delay exact-positive-integer?) (score (integer-in 0 5)))]))
 
 (struct memory-trace (strands) #:prefab)
 
