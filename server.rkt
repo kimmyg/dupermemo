@@ -1,8 +1,10 @@
 #lang racket
-(require web-server/dispatch
+(require file/md5
+         web-server/dispatch
          web-server/servlet
          web-server/servlet-env
-         "queued-fact.rkt")
+         "fact.rkt")
+;"queued-fact.rkt")
 
 (define (page/main request)
   (response/xexpr
@@ -17,8 +19,18 @@
        (li (a ([href "add"]) "add"))
        (li (a ([href "stats"]) "stats")))))))
 
+(define (fact-signature fact)
+  (md5 (string-append (fact-prompt fact) (fact-response fact))))
+
 (define (write-fact fact)
-  #t)
+  (cond
+    [else;(queued-fact? fact)
+     (with-output-to-file (string-append "queue/" (bytes->string/utf-8 (fact-signature fact)))
+       (λ ()
+         (write (fact-prompt fact))
+         (write (fact-response fact))
+         (write (fact-tags fact))))]))
+         ;(write (queued-fact-priority fact))))]))
 
 (define (page/add request)
   (let ([request (send/suspend
@@ -30,18 +42,21 @@
                         (link ([rel "stylesheet"] [href "/style.css"])))
                        (body
                         (form ([action ,k-url] [method "post"])
-                              (p "prompt" (input ([type "text"])))
-                              (p "response" (input ([type "text"])))
-                              (p "priority" (input ([type "text"])))
-                              (p "tags" (input ([type "text"])))
-                              (p (input ([type "submit"] [value "add fact"])))))))))])
+                              (p "prompt" (input ([name "prompt"] [type "text"])))
+                              (p "response" (input ([name "response"] [type "text"])))
+                              (p "priority" (input ([name "priority"] [type "text"])))
+                              (p "tags" (input ([name "tags"] [type "text"])))
+                              (p
+                               (a ([href "/"]) "back to main")
+                               (input ([type "submit"] [value "add fact"])))))))))])
     (let ([bindings (request-bindings request)])
       (let ([prompt (extract-binding/single 'prompt bindings)]
             [response (extract-binding/single 'prompt bindings)]
             [tags (extract-binding/single 'prompt bindings)]
             [priority (extract-binding/single 'prompt bindings)])
         (begin
-          (write-fact (queued-fact prompt response (map string->symbol (string-split tags)) (or (string->number priority) 1)))
+          ;(write-fact (queued-fact prompt response (map string->symbol (string-split tags)) (or (string->number priority) 1)))
+          (write-fact (fact prompt response (map string->symbol (string-split tags))))
           (redirect-to "/add"))))))
 
 (define (page/not-found request)
@@ -58,4 +73,4 @@
 (serve/servlet app-dispatch
                #:servlet-regexp #rx""
                #:command-line? #t
-               #:extra-files-paths (list (build-path "/Users/kimballg/Development/dupermemo/htdocs")))
+               #:extra-files-paths (list (build-path "htdocs")))

@@ -1,6 +1,6 @@
 #lang racket/base
-(require racket/contract
-         "fact.rkt")
+(require "fact.rkt"
+         racket/contract)
 
 (struct queued-fact fact (priority) #:prefab)
 
