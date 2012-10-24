@@ -6,4 +6,7 @@
 
 (provide
  (contract-out
-  [struct queued-fact ([priority number?])]))
+  [struct queued-fact ([prompt string?]
+                       [response string?]
+                       [tags (listof symbol?)]
+                       [priority number?])]))
