@@ -1,8 +1,8 @@
 #lang racket/base
-(require "fact.rkt"
+(require ;"fact.rkt"
          racket/contract)
 
-(struct queued-fact fact (priority) #:prefab)
+(struct queued-fact (prompt response tags priority) #:prefab)
 
 (provide
  (contract-out

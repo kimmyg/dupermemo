@@ -28,8 +28,11 @@
      (with-output-to-file (string-append "queue/" (bytes->string/utf-8 (fact-signature fact)))
        (λ ()
          (write (fact-prompt fact))
+         (newline)
          (write (fact-response fact))
+         (newline)
          (write (fact-tags fact))))]))
+
          ;(write (queued-fact-priority fact))))]))
 
 (define (page/add request)
@@ -73,4 +76,5 @@
 (serve/servlet app-dispatch
                #:servlet-regexp #rx""
                #:command-line? #t
+               #:server-root-path (build-path ".")
                #:extra-files-paths (list (build-path "htdocs")))
